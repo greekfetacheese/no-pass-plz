@@ -1,0 +1,26 @@
+[workspace]
+members = ["crates/passwd-derive"]
+resolver = "2"
+
+[package]
+name = "no-pass-plz"
+version = "1.0.0"
+edition = "2024"
+
+[dependencies]
+eframe = {version = "=0.33.0", features = ["wgpu"]}
+egui_commonmark = "=0.22.0"
+zeus-widgets = "0.1.0"
+
+passwd-derive = { path = "crates/passwd-derive" }
+argon2-rs = "0.1.11"
+
+# Misc
+secure-types = "0.2"
+zeus-theme = "0.2"
+lazy_static = "=1.5.0"
+serde = {version = "=1.0.228", features = ["derive"]}
+serde_json = "=1.0.145"
+
+[features]
+dev = []
