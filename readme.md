@@ -1,5 +1,7 @@
 NoPassPlz is a deterministic password generator. Unlike traditional password managers like Bitwarden, your passwords are never stored in the cloud or even locally, they are always derived on-the-fly from your master username and password. Think of it as generating high-entropy passwords from a single set of master credentials.
 
+![Screenshot](no-pass-plz.png)
+
 ## This is still WIP I may introduce breaking changes in the future.
 
 ## How It Works
