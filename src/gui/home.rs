@@ -47,7 +47,7 @@ impl Home {
          let end = start + items_per_page;
 
          ui.horizontal(|ui| {
-            ui.add_space(250.0);
+            ui.add_space(135.0);
             ui.spacing_mut().item_spacing = vec2(10.0, 0.0);
             ui.spacing_mut().button_padding = vec2(4.0, 4.0);
 
@@ -112,7 +112,7 @@ impl Home {
          false => success,
       };
 
-      let frame = theme.frame2.stroke(stroke);
+      let frame = theme.frame2.stroke(stroke).outer_margin(0);
 
       let no_entry_text =
          RichText::new("No entry found").size(theme.text_sizes.normal).color(warning);
@@ -135,7 +135,7 @@ impl Home {
          ui.set_height(frame_height);
 
          ui.horizontal(|ui| {
-            let text = format!("Index {}", index);
+            let text = format!("{}.", index);
             let text = RichText::new(text).size(theme.text_sizes.normal);
             let index_label = Label::new(text, None);
             let multi_label = MultiLabel::new(vec![index_label, title_label]).inter_spacing(10.0);
@@ -191,11 +191,12 @@ impl Home {
 
                let text_edit = TextEdit::multiline(&mut self.edited_index.description)
                   .font(FontId::proportional(theme.text_sizes.normal))
-                  .desired_width(ui.available_width() * 0.6)
+                  .desired_width(ui.available_width() * 0.9)
                   .hint_text("Description");
                ui.add(text_edit);
 
-               ui.checkbox(&mut self.edited_index.exposed, "Exposed");
+               let text = RichText::new("Exposed").size(theme.text_sizes.normal);
+               ui.checkbox(&mut self.edited_index.exposed, text);
 
                let text = RichText::new("OK").size(theme.text_sizes.normal);
                let button = Button::new(text).min_size(vec2(100.0, 25.0));
@@ -229,7 +230,7 @@ fn validate_and_save(app: AppCtx, index: u32, data: IndexData) {
 
    app.set_index(index, data);
 
-   match app.save_to_file() {
+   match app.save_index_map_to_file() {
       Ok(_) => {
          SHARED_GUI.write(|gui| {
             gui.home.edit_window = false;

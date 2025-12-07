@@ -30,8 +30,8 @@ fn main() -> eframe::Result {
         wgpu_options: wgpu_config,
         viewport: egui::ViewportBuilder::default()
             .with_decorations(true)
-            .with_inner_size([780.0, 600.0])
-            .with_min_inner_size([780.0, 600.0])
+            .with_inner_size([550.0, 500.0])
+            .with_min_inner_size([550.0, 500.0])
             .with_transparent(true)
             .with_resizable(true),
 

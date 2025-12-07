@@ -24,12 +24,12 @@ impl AppCtx {
       writer(&mut self.0.write().unwrap())
    }
 
-   pub fn load_from_file(&self) -> Result<(), Box<dyn std::error::Error>> {
-      self.write(|app| app.load_from_file())
+   pub fn load_index_map_from_file(&self) -> Result<(), Box<dyn std::error::Error>> {
+      self.write(|app| app.load_index_map_from_file())
    }
 
-   pub fn save_to_file(&self) -> Result<(), Box<dyn std::error::Error>> {
-      self.read(|app| app.save_to_file())
+   pub fn save_index_map_to_file(&self) -> Result<(), Box<dyn std::error::Error>> {
+      self.read(|app| app.save_index_map_to_file())
    }
 
    pub fn get_index(&self, index: u32) -> Option<IndexData> {
@@ -67,7 +67,7 @@ pub struct AppData {
 }
 
 impl AppData {
-   pub fn load_from_file(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+   pub fn load_index_map_from_file(&mut self) -> Result<(), Box<dyn std::error::Error>> {
       let dir = std::env::current_dir()?;
       let path = dir.join("NoPassPlz.json");
       let data = std::fs::read(&path)?;
@@ -76,7 +76,7 @@ impl AppData {
       Ok(())
    }
 
-   pub fn save_to_file(&self) -> Result<(), Box<dyn std::error::Error>> {
+   pub fn save_index_map_to_file(&self) -> Result<(), Box<dyn std::error::Error>> {
       let dir = std::env::current_dir()?;
       let path = dir.join("NoPassPlz.json");
       let data = serde_json::to_string(self)?;
@@ -109,7 +109,7 @@ impl App {
 
       let app_ctx = AppCtx::default();
 
-      match app_ctx.load_from_file() {
+      match app_ctx.load_index_map_from_file() {
          Ok(_) => {}
          Err(e) => {
             eprintln!("Failed to load app data {}", e);
