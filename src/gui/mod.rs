@@ -5,13 +5,12 @@ pub mod misc;
 
 use app::AppCtx;
 
-use eframe::egui::{
-   Align2, Button, Context, MenuBar, OpenUrl, RichText, ScrollArea, Ui, Window, vec2,
-};
+use eframe::egui::{Align2, Context, MenuBar, OpenUrl, RichText, ScrollArea, Ui, Window, vec2};
 use egui_commonmark::{CommonMarkCache, CommonMarkViewer};
 use lazy_static::lazy_static;
 use std::sync::{Arc, RwLock};
 use zeus_theme::{Theme, ThemeKind};
+use zeus_widgets::Button;
 
 use super::gui::{auth::*, home::Home, misc::*};
 
@@ -131,6 +130,8 @@ impl TopMenu {
          return;
       }
 
+      let button_visuals = theme.button_visuals();
+
       Window::new("About")
          .title_bar(false)
          .resizable(false)
@@ -148,7 +149,8 @@ impl TopMenu {
 
                let repo_link = "https://github.com/greekfetacheese/no-pass-plz";
                let text = RichText::new("View on GitHub").size(theme.text_sizes.normal);
-               let res = ui.add(Button::new(text).min_size(vec2(100.0, 25.0)));
+               let button = Button::new(text).min_size(vec2(100.0, 25.0)).visuals(button_visuals);
+               let res = ui.add(button);
 
                if res.clicked() {
                   let url = OpenUrl::new_tab(repo_link);
@@ -156,7 +158,7 @@ impl TopMenu {
                }
 
                let text = RichText::new("Close").size(theme.text_sizes.normal);
-               let button = Button::new(text).min_size(vec2(100.0, 25.0));
+               let button = Button::new(text).min_size(vec2(100.0, 25.0)).visuals(button_visuals);
                if ui.add(button).clicked() {
                   self.about_open = false;
                }
@@ -168,6 +170,8 @@ impl TopMenu {
       if !self.how_it_works_open {
          return;
       }
+
+      let button_visuals = theme.button_visuals();
 
       Window::new("How it works")
          .title_bar(false)
@@ -187,7 +191,7 @@ impl TopMenu {
                });
 
                let text = RichText::new("Close").size(theme.text_sizes.normal);
-               let button = Button::new(text).min_size(vec2(100.0, 25.0));
+               let button = Button::new(text).min_size(vec2(100.0, 25.0)).visuals(button_visuals);
                if ui.add(button).clicked() {
                   self.how_it_works_open = false;
                }
@@ -196,9 +200,7 @@ impl TopMenu {
    }
 }
 
-
-const MARKDOWN: &str =
-r"NoPassPlz is a deterministic password generator. Unlike traditional password managers like Bitwarden, your passwords are never stored in the cloud or even locally, they are always derived on-the-fly from your master username and password. Think of it as generating high-entropy passwords from a single set of master credentials.
+const MARKDOWN: &str = r"NoPassPlz is a deterministic password generator. Unlike traditional password managers like Bitwarden, your passwords are never stored in the cloud or even locally, they are always derived on-the-fly from your master username and password. Think of it as generating high-entropy passwords from a single set of master credentials.
 
 ## This is still WIP I may introduce breaking changes in the future.
 

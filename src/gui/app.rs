@@ -1,7 +1,7 @@
 use super::SHARED_GUI;
 use eframe::{
    CreationContext,
-   egui::{self, Frame},
+   egui::{self, Frame, Ui},
 };
 use passwd_derive::PasswordDeriver;
 use secure_types::SecureString;
@@ -101,7 +101,7 @@ impl App {
    pub fn new(cc: &CreationContext) -> Self {
       let egui_ctx = cc.egui_ctx.clone();
       let theme = Theme::new(ThemeKind::Dark);
-      egui_ctx.set_style(theme.style.clone());
+      egui_ctx.set_global_style(theme.style.clone());
 
       SHARED_GUI.write(|gui| {
          gui.egui_ctx = egui_ctx;
@@ -138,14 +138,14 @@ impl eframe::App for App {
       egui::Rgba::TRANSPARENT.to_array()
    }
 
-   fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+   fn ui(&mut self, ui: &mut Ui, _frame: &mut eframe::Frame) {
       SHARED_GUI.write(|gui| {
-         self.on_shutdown(ctx);
+         self.on_shutdown(ui.ctx());
 
          // This is needed for Windows
          if !self.style_has_been_set {
             let style = gui.theme.style.clone();
-            ctx.set_style(style);
+            ui.set_global_style(style);
             self.style_has_been_set = true;
          }
 
@@ -154,17 +154,17 @@ impl eframe::App for App {
          let panel_frame = Frame::new().fill(bg_color);
          let top_frame = Frame::new().inner_margin(5).fill(bg_color);
 
-         egui::TopBottomPanel::top("top_panel")
-            .min_height(30.0)
-            .max_height(50.0)
+         egui::Panel::top("top_panel")
+            .min_size(30.0)
+            .max_size(50.0)
             .resizable(false)
             .show_separator_line(false)
             .frame(top_frame)
-            .show(ctx, |ui| {
+            .show_inside(ui, |ui| {
                gui.show_top_panel(ui);
             });
 
-         egui::CentralPanel::default().frame(panel_frame).show(ctx, |ui| {
+         egui::CentralPanel::default().frame(panel_frame).show_inside(ui, |ui| {
             ui.vertical_centered(|ui| {
                gui.show_central_panel(self.app_ctx.clone(), ui);
             });

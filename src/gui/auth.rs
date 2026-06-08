@@ -1,11 +1,11 @@
 #![allow(dead_code)]
 
 use argon2_rs::Argon2;
-use eframe::egui::{Button, FontId, Margin, RichText, Sense, Ui, vec2};
+use eframe::egui::{FontId, Margin, RichText, Sense, Ui, vec2};
 use passwd_derive::{PasswordDeriver, fast, normal, slow, very_slow};
 use secure_types::SecureString;
 use zeus_theme::{Theme, utils::frame_it};
-use zeus_widgets::SecureTextEdit;
+use zeus_widgets::{Button, SecureTextEdit};
 
 use super::{AppCtx, SHARED_GUI};
 
@@ -47,6 +47,8 @@ impl CredentialsForm {
          return;
       }
 
+      let text_edit_visuals = theme.text_edit_visuals();
+
       ui.vertical_centered(|ui| {
          ui.spacing_mut().item_spacing = vec2(10.0, 15.0);
 
@@ -60,7 +62,8 @@ impl CredentialsForm {
                .min_size(text_edit_size)
                .margin(Margin::same(10))
                .password(false)
-               .font(FontId::proportional(theme.text_sizes.normal));
+               .font(FontId::proportional(theme.text_sizes.normal))
+               .visuals(text_edit_visuals);
             ui.add(text_edit);
          });
 
@@ -71,6 +74,7 @@ impl CredentialsForm {
                .min_size(text_edit_size)
                .margin(Margin::same(10))
                .font(FontId::proportional(theme.text_sizes.normal))
+               .visuals(text_edit_visuals)
                .password(true);
             ui.add(text_edit);
          });
@@ -83,6 +87,7 @@ impl CredentialsForm {
                   .min_size(text_edit_size)
                   .margin(Margin::same(10))
                   .font(FontId::proportional(theme.text_sizes.normal))
+                  .visuals(text_edit_visuals)
                   .password(self.with_confirm_password);
                ui.add(text_edit);
             });
@@ -206,6 +211,8 @@ impl Auth {
          return;
       }
 
+      let button_visuals = theme.button_visuals();
+
       ui.vertical_centered(|ui| {
          ui.spacing_mut().item_spacing = vec2(10.0, 15.0);
          ui.spacing_mut().button_padding = vec2(8.0, 8.0);
@@ -213,7 +220,7 @@ impl Auth {
          self.credentials_form.show(theme, ui);
 
          let text = RichText::new("OK").size(theme.text_sizes.normal);
-         let button = Button::new(text).min_size(vec2(100.0, 25.0));
+         let button = Button::new(text).min_size(vec2(100.0, 25.0)).visuals(button_visuals);
 
          if ui.add(button).clicked() {
             self.init_deriver(app.clone());
@@ -222,7 +229,7 @@ impl Auth {
          #[cfg(feature = "dev")]
          {
             let text = RichText::new("DEV").size(theme.text_sizes.normal);
-            let button = Button::new(text).min_size(vec2(100.0, 25.0));
+            let button = Button::new(text).min_size(vec2(100.0, 25.0)).visuals(button_visuals);
             if ui.add(button).clicked() {
                let username = SecureString::from("dev");
                let password = SecureString::from("dev");

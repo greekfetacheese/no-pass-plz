@@ -1,9 +1,7 @@
 use super::{AppCtx, SHARED_GUI, app::IndexData};
-use eframe::egui::{
-   Align2, Button, FontId, RichText, ScrollArea, Stroke, TextEdit, Ui, Window, vec2,
-};
+use eframe::egui::{Align2, FontId, RichText, ScrollArea, Stroke, Ui, Window, vec2};
 use zeus_theme::Theme;
-use zeus_widgets::{Label, MultiLabel};
+use zeus_widgets::{Button, Label, MultiLabel, SecureTextEdit};
 
 /// Main Ui
 pub struct Home {
@@ -36,6 +34,8 @@ impl Home {
          return;
       }
 
+      let button_visuals = theme.button_visuals();
+
       self.show_edit_window(app.clone(), theme, ui);
 
       ui.vertical_centered(|ui| {
@@ -56,14 +56,14 @@ impl Home {
             ui.label(current_page_text);
 
             let text = RichText::new("Prev").size(theme.text_sizes.normal);
-            let button = Button::new(text);
+            let button = Button::new(text).visuals(button_visuals);
 
             if ui.add_enabled(self.current_page > 0, button).clicked() {
                self.current_page -= 1;
             }
 
             let text = RichText::new("Next").size(theme.text_sizes.normal);
-            let button = Button::new(text);
+            let button = Button::new(text).visuals(button_visuals);
 
             if ui.add(button).clicked() {
                self.current_page += 1;
@@ -112,7 +112,8 @@ impl Home {
          false => success,
       };
 
-      let frame = theme.frame2.stroke(stroke).outer_margin(0);
+      let button_visuals = theme.button_visuals();
+      let frame = theme.frame1.stroke(stroke).outer_margin(0);
 
       let no_entry_text =
          RichText::new("No entry found").size(theme.text_sizes.normal).color(warning);
@@ -144,7 +145,7 @@ impl Home {
 
          ui.horizontal(|ui| {
             let text = RichText::new("Copy Password").size(theme.text_sizes.small);
-            let button = Button::new(text);
+            let button = Button::new(text).visuals(button_visuals);
             if ui.add(button).clicked() {
                let password = app.derive_at(index).expect("Deriver instance not found");
                let pass_str = password.unlock_str(|s| String::from(s));
@@ -152,7 +153,7 @@ impl Home {
             }
 
             let text = RichText::new("Edit").size(theme.text_sizes.small);
-            let button = Button::new(text);
+            let button = Button::new(text).visuals(button_visuals);
 
             if ui.add(button).clicked() {
                self.edit_window = true;
@@ -168,6 +169,8 @@ impl Home {
          return;
       }
 
+      let button_visuals = theme.button_visuals();
+
       Window::new("Edit Entry")
          .title_bar(false)
          .resizable(false)
@@ -180,7 +183,7 @@ impl Home {
                let text = RichText::new("Title").size(theme.text_sizes.normal);
                ui.label(text);
 
-               let text_edit = TextEdit::singleline(&mut self.edited_index.title)
+               let text_edit = SecureTextEdit::singleline(&mut self.edited_index.title)
                   .font(FontId::proportional(theme.text_sizes.normal))
                   .desired_width(ui.available_width() * 0.6)
                   .hint_text("Title");
@@ -189,7 +192,7 @@ impl Home {
                let text = RichText::new("Description").size(theme.text_sizes.normal);
                ui.label(text);
 
-               let text_edit = TextEdit::multiline(&mut self.edited_index.description)
+               let text_edit = SecureTextEdit::multiline(&mut self.edited_index.description)
                   .font(FontId::proportional(theme.text_sizes.normal))
                   .desired_width(ui.available_width() * 0.9)
                   .hint_text("Description");
@@ -199,7 +202,7 @@ impl Home {
                ui.checkbox(&mut self.edited_index.exposed, text);
 
                let text = RichText::new("OK").size(theme.text_sizes.normal);
-               let button = Button::new(text).min_size(vec2(100.0, 25.0));
+               let button = Button::new(text).min_size(vec2(100.0, 25.0)).visuals(button_visuals);
 
                if ui.add(button).clicked() {
                   let new_data = self.edited_index.clone();
@@ -210,7 +213,7 @@ impl Home {
                }
 
                let text = RichText::new("Cancel").size(theme.text_sizes.normal);
-               let button = Button::new(text).min_size(vec2(100.0, 25.0));
+               let button = Button::new(text).min_size(vec2(100.0, 25.0)).visuals(button_visuals);
 
                if ui.add(button).clicked() {
                   self.edit_window = false;

@@ -8,19 +8,28 @@ version = "1.0.0"
 edition = "2024"
 
 [dependencies]
-eframe = {version = "=0.33.0", features = ["wgpu"]}
-egui_commonmark = "=0.22.0"
-zeus-widgets = "0.1.0"
+eframe = {version = "=0.34.1", features = ["wgpu"]}
+egui_commonmark = "=0.23.0"
+zeus-widgets = {version = "0.4.0", features = ["secure-types"]}
 
 passwd-derive = { path = "crates/passwd-derive" }
-argon2-rs = "0.1.11"
+argon2-rs = "0.2"
 
 # Misc
 secure-types = "0.2"
-zeus-theme = "0.2"
+zeus-theme = "0.4"
 lazy_static = "=1.5.0"
 serde = {version = "=1.0.228", features = ["derive"]}
 serde_json = "=1.0.145"
+
+[profile.prod]
+inherits = "release"
+codegen-units = 1
+incremental = true
+strip = true
+opt-level = 2
+debug = false
+lto = "fat"
 
 [features]
 dev = []
