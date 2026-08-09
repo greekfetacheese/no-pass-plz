@@ -1,12 +1,17 @@
 use super::{AppCtx, SHARED_GUI, app::IndexData};
-use eframe::egui::{Align2, FontId, RichText, ScrollArea, Stroke, Ui, Window, vec2};
+use eframe::egui::{FontId, Order, RichText, ScrollArea, Spinner, Stroke, Ui, vec2};
+use secure_types::Zeroize;
 use zeus_theme::Theme;
-use zeus_widgets::{Button, Label, MultiLabel, SecureTextEdit};
+use zeus_ui_components::QrImage;
+use zeus_widgets::{Button, Label, Modal, MultiLabel, SecureTextEdit};
 
 /// Main Ui
 pub struct Home {
    open: bool,
-   edit_window: bool,
+   show_edit_window: bool,
+   show_qr_code: bool,
+   qr_loading: bool,
+   qr_image: QrImage,
    index_to_edit: u32,
    edited_index: IndexData,
    current_page: u32,
@@ -17,7 +22,10 @@ impl Home {
    pub fn new() -> Self {
       Self {
          open: false,
-         edit_window: false,
+         show_edit_window: false,
+         show_qr_code: false,
+         qr_loading: false,
+         qr_image: QrImage::empty_with_error("No QR code available".to_string()),
          index_to_edit: 0,
          edited_index: IndexData::default(),
          current_page: 0,
@@ -37,8 +45,10 @@ impl Home {
       let button_visuals = theme.button_visuals();
 
       self.show_edit_window(app.clone(), theme, ui);
+      self.show_qr_code(theme, ui);
 
       ui.vertical_centered(|ui| {
+         ui.add_space(10.0);
          ui.spacing_mut().item_spacing = vec2(10.0, 10.0);
          ui.spacing_mut().button_padding = vec2(6.0, 6.0);
 
@@ -152,11 +162,18 @@ impl Home {
                ui.ctx().copy_text(pass_str);
             }
 
+            let text = RichText::new("QR Code").size(theme.text_sizes.small);
+            let button = Button::new(text).visuals(button_visuals);
+            if ui.add(button).clicked() {
+               self.show_qr_code = true;
+               self.encode_qr(app.clone(), index);
+            }
+
             let text = RichText::new("Edit").size(theme.text_sizes.small);
             let button = Button::new(text).visuals(button_visuals);
 
             if ui.add(button).clicked() {
-               self.edit_window = true;
+               self.show_edit_window = true;
                self.index_to_edit = index;
                self.edited_index = index_data.clone();
             }
@@ -164,23 +181,90 @@ impl Home {
       });
    }
 
-   fn show_edit_window(&mut self, app: AppCtx, theme: &Theme, ui: &mut Ui) {
-      if !self.edit_window {
+   fn encode_qr(&mut self, app: AppCtx, index: u32) {
+      self.qr_loading = true;
+
+      std::thread::spawn(move || {
+         let password = app.derive_at(index).expect("Deriver instance not found");
+         let mut data = password.unlock_str(|s| String::from(s));
+         let uri = format!("password:{}", index);
+
+         let qr_image = QrImage::new(&data, uri);
+         data.zeroize();
+
+         SHARED_GUI.write(|gui| {
+            gui.home.qr_image = qr_image;
+            gui.home.qr_loading = false;
+         });
+      });
+   }
+
+   fn show_qr_code(&mut self, theme: &Theme, ui: &mut Ui) {
+      if !self.show_qr_code {
          return;
       }
 
       let button_visuals = theme.button_visuals();
+      let mut open = self.show_qr_code;
 
-      Window::new("Edit Entry")
-         .title_bar(false)
-         .resizable(false)
-         .anchor(Align2::CENTER_CENTER, vec2(0.0, 0.0))
+      Modal::new("qr_code", &mut open)
+         .backdrop_order(Order::Foreground)
+         .content_order(Order::Tooltip)
+         .close_on_backdrop(false)
+         .close_on_escape(false)
+         .show(ui.ctx(), |ui| {
+            ui.vertical_centered(|ui| {
+               ui.spacing_mut().item_spacing = vec2(10.0, 25.0);
+               ui.spacing_mut().button_padding = vec2(8.0, 8.0);
+
+               if self.qr_loading {
+                  ui.add(Spinner::new().size(20.0).color(theme.colors.text));
+                  return;
+               }
+
+               if let Some(err) = self.qr_image.error() {
+                  let text = RichText::new(err.to_string()).size(theme.text_sizes.normal);
+                  ui.label(text);
+                  return;
+               }
+
+               let text = RichText::new("QR Code").size(theme.text_sizes.large);
+               ui.label(text);
+
+               let image = self.qr_image.image();
+               let size = vec2(250.0, 250.0);
+               ui.add(image.fit_to_exact_size(size));
+
+               let text = RichText::new("Close").size(theme.text_sizes.normal);
+               let button = Button::new(text).min_size(vec2(100.0, 25.0)).visuals(button_visuals);
+               if ui.add(button).clicked() {
+                  self.show_qr_code = false;
+                  let erased = self.qr_image.clear(ui.ctx());
+                  debug_assert!(erased);
+               }
+            });
+         });
+   }
+
+   fn show_edit_window(&mut self, app: AppCtx, theme: &Theme, ui: &mut Ui) {
+      if !self.show_edit_window {
+         return;
+      }
+
+      let button_visuals = theme.button_visuals();
+      let mut open = self.show_edit_window;
+
+      Modal::new("entry_edit", &mut open)
+         .backdrop_order(Order::Foreground)
+         .content_order(Order::Tooltip)
+         .close_on_backdrop(false)
+         .close_on_escape(false)
          .show(ui.ctx(), |ui| {
             ui.vertical_centered(|ui| {
                ui.spacing_mut().item_spacing = vec2(10.0, 10.0);
                ui.spacing_mut().button_padding = vec2(8.0, 8.0);
 
-               let text = RichText::new("Title").size(theme.text_sizes.normal);
+               let text = RichText::new("Title").size(theme.text_sizes.large);
                ui.label(text);
 
                let text_edit = SecureTextEdit::singleline(&mut self.edited_index.title)
@@ -189,7 +273,7 @@ impl Home {
                   .hint_text("Title");
                ui.add(text_edit);
 
-               let text = RichText::new("Description").size(theme.text_sizes.normal);
+               let text = RichText::new("Description").size(theme.text_sizes.large);
                ui.label(text);
 
                let text_edit = SecureTextEdit::multiline(&mut self.edited_index.description)
@@ -216,7 +300,7 @@ impl Home {
                let button = Button::new(text).min_size(vec2(100.0, 25.0)).visuals(button_visuals);
 
                if ui.add(button).clicked() {
-                  self.edit_window = false;
+                  self.show_edit_window = false;
                }
             });
          });
@@ -236,14 +320,14 @@ fn validate_and_save(app: AppCtx, index: u32, data: IndexData) {
    match app.save_index_map_to_file() {
       Ok(_) => {
          SHARED_GUI.write(|gui| {
-            gui.home.edit_window = false;
+            gui.home.show_edit_window = false;
             gui.msg_window.open("Success", "Entry saved");
          });
       }
       Err(err) => {
          app.remove_index(index);
          SHARED_GUI.write(|gui| {
-            gui.home.edit_window = false;
+            gui.home.show_edit_window = false;
             gui.msg_window.open("Error", err.to_string());
          });
       }

@@ -10,7 +10,6 @@ use std::{
    collections::HashMap,
    sync::{Arc, RwLock},
 };
-use zeus_theme::{Theme, ThemeKind};
 
 #[derive(Clone, Default)]
 pub struct AppCtx(Arc<RwLock<AppData>>);
@@ -100,12 +99,13 @@ pub struct App {
 impl App {
    pub fn new(cc: &CreationContext) -> Self {
       let egui_ctx = cc.egui_ctx.clone();
-      let theme = Theme::new(ThemeKind::Dark);
-      egui_ctx.set_global_style(theme.style.clone());
 
-      SHARED_GUI.write(|gui| {
-         gui.egui_ctx = egui_ctx;
+      let theme = SHARED_GUI.write(|gui| {
+         gui.egui_ctx = egui_ctx.clone();
+         gui.theme.clone()
       });
+
+      egui_ctx.set_global_style(theme.style.clone());
 
       let app_ctx = AppCtx::default();
 

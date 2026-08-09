@@ -45,6 +45,7 @@ fn main() -> eframe::Result {
       "NoPassPlz",
       options,
       Box::new(|cc| {
+         egui_extras::install_image_loaders(&cc.egui_ctx);
          let app = App::new(cc);
 
          Ok(Box::new(app))

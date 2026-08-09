@@ -1,13 +1,12 @@
-use eframe::egui::{Align2, Frame, Label, Order, RichText, Spinner, Ui, Vec2, Window, vec2};
+use eframe::egui::{Label, Order, RichText, Spinner, Ui, vec2};
 
 use zeus_theme::Theme;
-use zeus_widgets::Button;
+use zeus_widgets::{Button, Modal};
 
 pub struct LoadingWindow {
    open: bool,
    pub msg: String,
    pub size: (f32, f32),
-   pub anchor: (Align2, Vec2),
 }
 
 impl Default for LoadingWindow {
@@ -21,8 +20,7 @@ impl LoadingWindow {
       Self {
          open: false,
          msg: String::new(),
-         size: (200.0, 100.0),
-         anchor: (Align2::CENTER_CENTER, vec2(0.0, 0.0)),
+         size: (250.0, 150.0),
       }
    }
 
@@ -32,9 +30,7 @@ impl LoadingWindow {
    }
 
    pub fn reset(&mut self) {
-      self.open = false;
-      self.msg = String::new();
-      self.size = (200.0, 100.0);
+      *self = Self::new();
    }
 
    pub fn show(&mut self, theme: &Theme, ui: &mut Ui) {
@@ -42,16 +38,15 @@ impl LoadingWindow {
          return;
       }
 
-      Window::new("Loading")
-         .title_bar(false)
-         .order(Order::Debug)
-         .resizable(false)
-         .anchor(self.anchor.0, self.anchor.1)
-         .collapsible(false)
-         .frame(Frame::window(ui.style()))
+      Modal::new(self.msg.clone(), &mut self.open)
+         .backdrop_order(Order::Tooltip)
+         .content_order(Order::Debug)
+         .close_on_backdrop(false)
+         .close_on_escape(false)
          .show(ui.ctx(), |ui| {
             ui.set_width(self.size.0);
-            ui.set_height(self.size.1);
+            ui.set_max_height(self.size.1);
+
             ui.vertical_centered(|ui| {
                ui.add(Spinner::new().size(25.0).color(theme.colors.text));
                ui.label(RichText::new(&self.msg).size(17.0));
@@ -65,6 +60,7 @@ pub struct MsgWindow {
    pub open: bool,
    pub title: String,
    pub message: String,
+   pub size: (f32, f32),
 }
 
 impl MsgWindow {
@@ -73,6 +69,7 @@ impl MsgWindow {
          open: false,
          title: String::new(),
          message: String::new(),
+         size: (250.0, 150.0),
       }
    }
 
@@ -93,16 +90,19 @@ impl MsgWindow {
       let title = RichText::new(self.title.clone()).size(theme.text_sizes.heading);
       let msg = RichText::new(&self.message).size(theme.text_sizes.normal);
 
-      Window::new("msg_window")
-         .title_bar(false)
-         .resizable(false)
-         .order(Order::Debug)
-         .anchor(Align2::CENTER_CENTER, vec2(0.0, 0.0))
-         .collapsible(false)
-         .frame(Frame::window(ui.style()))
+      let mut open = self.open;
+
+      Modal::new("msg_window", &mut open)
+         .backdrop_order(Order::Tooltip)
+         .content_order(Order::Debug)
+         .close_on_backdrop(false)
+         .close_on_escape(false)
          .show(ui.ctx(), |ui| {
+            ui.set_width(self.size.0);
+            ui.set_max_height(self.size.1);
+
             ui.vertical_centered(|ui| {
-               ui.spacing_mut().item_spacing.y = 10.0;
+               ui.spacing_mut().item_spacing.y = 20.0;
                ui.spacing_mut().button_padding = vec2(10.0, 8.0);
 
                ui.label(title);
@@ -110,12 +110,10 @@ impl MsgWindow {
                let label = Label::new(msg).wrap();
                ui.add(label);
 
-               ui.add_space(10.0);
-
-               let size = vec2(ui.available_width() * 0.2, 25.0);
+               let size = vec2(50.0, 20.0);
                let text = RichText::new("OK").size(theme.text_sizes.normal);
                let ok_button = Button::new(text).min_size(size).visuals(button_visuals);
-               
+
                if ui.add(ok_button).clicked() {
                   self.open = false;
                }

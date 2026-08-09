@@ -5,12 +5,12 @@ pub mod misc;
 
 use app::AppCtx;
 
-use eframe::egui::{Align2, Context, MenuBar, OpenUrl, RichText, ScrollArea, Ui, Window, vec2};
+use eframe::egui::{Context, MenuBar, OpenUrl, Order, RichText, ScrollArea, Ui, vec2};
 use egui_commonmark::{CommonMarkCache, CommonMarkViewer};
 use lazy_static::lazy_static;
 use std::sync::{Arc, RwLock};
 use zeus_theme::{Theme, ThemeKind};
-use zeus_widgets::Button;
+use zeus_widgets::{Button, Modal};
 
 use super::gui::{auth::*, home::Home, misc::*};
 
@@ -53,7 +53,7 @@ impl Default for GUI {
    fn default() -> Self {
       Self {
          egui_ctx: Context::default(),
-         theme: Theme::new(ThemeKind::Dark),
+         theme: Theme::new(ThemeKind::TokyoNight),
          top_menu: TopMenu::new(),
          home: Home::new(),
          auth: Auth::new(),
@@ -131,17 +131,22 @@ impl TopMenu {
       }
 
       let button_visuals = theme.button_visuals();
+      let mut open = self.about_open;
 
-      Window::new("About")
-         .title_bar(false)
-         .resizable(false)
-         .anchor(Align2::CENTER_CENTER, vec2(0.0, 0.0))
+      Modal::new("about", &mut open)
+         .backdrop_order(Order::Foreground)
+         .content_order(Order::Tooltip)
+         .close_on_backdrop(false)
+         .close_on_escape(false)
          .show(ui.ctx(), |ui| {
+            ui.set_max_width(250.0);
+            ui.set_max_height(200.0);
+
             ui.vertical_centered(|ui| {
-               ui.spacing_mut().item_spacing = vec2(10.0, 10.0);
+               ui.spacing_mut().item_spacing = vec2(10.0, 20.0);
                ui.spacing_mut().button_padding = vec2(8.0, 8.0);
 
-               let text = RichText::new("NoPassPlz").size(theme.text_sizes.heading);
+               let text = RichText::new("NoPassPlz").size(theme.text_sizes.normal);
                ui.label(text);
 
                let text = RichText::new("Version 1.0.0").size(theme.text_sizes.normal);
@@ -172,18 +177,20 @@ impl TopMenu {
       }
 
       let button_visuals = theme.button_visuals();
+      let mut open = self.how_it_works_open;
 
-      Window::new("How it works")
-         .title_bar(false)
-         .resizable(false)
-         .anchor(Align2::CENTER_CENTER, vec2(0.0, 0.0))
+      Modal::new("how_it_works", &mut open)
+         .backdrop_order(Order::Foreground)
+         .content_order(Order::Tooltip)
+         .close_on_backdrop(false)
+         .close_on_escape(false)
          .show(ui.ctx(), |ui| {
+            ui.set_max_width(400.0);
+            ui.set_max_height(400.0);
+
             ui.vertical_centered(|ui| {
                ui.spacing_mut().item_spacing = vec2(10.0, 10.0);
                ui.spacing_mut().button_padding = vec2(8.0, 8.0);
-
-               ui.set_width(400.0);
-               ui.set_height(400.0);
 
                ScrollArea::vertical().show(ui, |ui| {
                   let mut cache = CommonMarkCache::default();
