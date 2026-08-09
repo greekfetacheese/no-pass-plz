@@ -160,11 +160,11 @@ impl eframe::App for App {
             .resizable(false)
             .show_separator_line(false)
             .frame(top_frame)
-            .show_inside(ui, |ui| {
+            .show(ui, |ui| {
                gui.show_top_panel(ui);
             });
 
-         egui::CentralPanel::default().frame(panel_frame).show_inside(ui, |ui| {
+         egui::CentralPanel::default().frame(panel_frame).show(ui, |ui| {
             ui.vertical_centered(|ui| {
                gui.show_central_panel(self.app_ctx.clone(), ui);
             });

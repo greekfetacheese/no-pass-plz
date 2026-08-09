@@ -57,7 +57,7 @@ impl CredentialsForm {
 
          // Username Field
          ui.label(RichText::new("Username").size(theme.text_sizes.large));
-         self.username.unlock_mut(|username| {
+         self.username.secure_mut(|username| {
             let text_edit = SecureTextEdit::singleline(username)
                .min_size(text_edit_size)
                .margin(Margin::same(10))
@@ -69,7 +69,7 @@ impl CredentialsForm {
 
          // Password Field
          ui.label(RichText::new("Password").size(theme.text_sizes.large));
-         self.password.unlock_mut(|password| {
+         self.password.secure_mut(|password| {
             let text_edit = SecureTextEdit::singleline(password)
                .min_size(text_edit_size)
                .margin(Margin::same(10))
@@ -82,7 +82,7 @@ impl CredentialsForm {
          // Confirm Password Field
          if self.with_confirm_password {
             ui.label(RichText::new("Confirm Password").size(theme.text_sizes.large));
-            self.confirm_password.unlock_mut(|confirm_password| {
+            self.confirm_password.secure_mut(|confirm_password| {
                let text_edit = SecureTextEdit::singleline(confirm_password)
                   .min_size(text_edit_size)
                   .margin(Margin::same(10))
