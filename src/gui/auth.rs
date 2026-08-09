@@ -1,6 +1,6 @@
 use argon2_rs::Argon2;
 use eframe::egui::{RichText, Ui, vec2};
-use passwd_derive::{PasswordDeriver, slow};
+use passwd_derive::{PasswordDeriver, default_argon2};
 use zeus_theme::Theme;
 use zeus_ui_components::CredentialsForm;
 use zeus_widgets::Button;
@@ -20,7 +20,7 @@ impl Auth {
       Self {
          open: true,
          credentials_form: form,
-         argon2: slow(),
+         argon2: default_argon2(),
       }
    }
 
@@ -96,7 +96,7 @@ impl Auth {
 
       std::thread::spawn(move || {
          SHARED_GUI.write(|gui| {
-            gui.loading_window.open("Please wait... this may take a minute or two");
+            gui.loading_window.open("Please wait... this may take 2-3 minutes");
          });
 
          let deriver = match PasswordDeriver::new(username, password, confirm_password, argon2) {

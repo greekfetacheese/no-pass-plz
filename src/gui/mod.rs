@@ -207,21 +207,20 @@ impl TopMenu {
    }
 }
 
+/// Copied from the readme.md but without the screenshot
 const MARKDOWN: &str = r"NoPassPlz is a deterministic password generator. Unlike traditional password managers like Bitwarden, your passwords are never stored in the cloud or even locally, they are always derived on-the-fly from your master username and password. Think of it as generating high-entropy passwords from a single set of master credentials.
-
-## This is still WIP I may introduce breaking changes in the future.
 
 ## How It Works
 
 Given your master username and password, we first compute a seed using the Argon2id key derivation function (KDF) with these default parameters:
 - **Salt**: SHA3-512 hash of the username
-- **Memory cost**: 8192 MB
-- **Iterations**: 8
+- **Memory cost**: 4096 MB
+- **Iterations**: 32
 - **Parallelism**: 1
-- **Output length**: 64 bytes
+- **Output length**: 64 bytes (512 bits)
 
 
-As of 2025 the estimated computation time for these parameters is about 1 min and 11 seconds. (For most consumer hardware, give or take a couple of seconds)
+As of 2026 the estimated computation time for these parameters is about 2 min and 15 seconds. (For most hardware, give or take a couple of seconds)
 
 For each password, we then derive it using HMAC-SHA3-512:
 - The Argon2id output is used as the HMAC key.

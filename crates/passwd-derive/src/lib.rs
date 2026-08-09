@@ -5,45 +5,16 @@ use sha3::{Digest, Sha3_512};
 
 pub type Error = Box<dyn std::error::Error>;
 
-/// Estimated time 17 seconds
-pub fn fast() -> Argon2 {
-   Argon2 {
-      m_cost: 2048_000,
-      t_cost: 8,
-      p_cost: 1,
-      hash_length: RECOMMENDED_HASH_LENGTH,
-      ..Default::default()
-   }
-}
+pub const M_COST: u32 = 4096_000;
+pub const T_COST: u32 = 32;
+pub const P_COST: u32 = 1;
 
-/// Estimated time 35 seconds
-pub fn normal() -> Argon2 {
+/// Estimated time 135 seconds
+pub fn default_argon2() -> Argon2 {
    Argon2 {
-      m_cost: 4096_000,
-      t_cost: 8,
-      p_cost: 1,
-      hash_length: RECOMMENDED_HASH_LENGTH,
-      ..Default::default()
-   }
-}
-
-/// Estimated time 71 seconds
-pub fn slow() -> Argon2 {
-   Argon2 {
-      m_cost: 8192_000,
-      t_cost: 8,
-      p_cost: 1,
-      hash_length: RECOMMENDED_HASH_LENGTH,
-      ..Default::default()
-   }
-}
-
-/// Estimated time 137 seconds
-pub fn very_slow() -> Argon2 {
-   Argon2 {
-      m_cost: 8192_000,
-      t_cost: 16,
-      p_cost: 1,
+      m_cost: M_COST,
+      t_cost: T_COST,
+      p_cost: P_COST,
       hash_length: RECOMMENDED_HASH_LENGTH,
       ..Default::default()
    }

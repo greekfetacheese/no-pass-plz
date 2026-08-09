@@ -1,6 +1,9 @@
 [package]
 name = "passwd-derive"
 version = "0.1.0"
+description = "Deterministic password generator"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/greekfetacheese/no-pass-plz"
 edition = "2024"
 
 [dependencies]
