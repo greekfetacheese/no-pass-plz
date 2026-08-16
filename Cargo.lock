@@ -2696,7 +2696,7 @@ dependencies = [
 
 [[package]]
 name = "no-pass-plz"
-version = "2.0.0"
+version = "2.0.10"
 dependencies = [
  "argon2-rs",
  "eframe",
@@ -6167,9 +6167,9 @@ dependencies = [
 
 [[package]]
 name = "zeus-widgets"
-version = "0.4.2"
+version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dc284663b709d14d9cb9549ece9a1e716f40e839bef1c8738269fa5b0e87436e"
+checksum = "d9882b0e6b25422c37a10b4c039911a76e611bfd5be06a98b38b6e2ea99aeacd"
 dependencies = [
  "egui",
  "secure-types",

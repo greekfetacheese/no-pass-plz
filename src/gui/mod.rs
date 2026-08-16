@@ -149,7 +149,7 @@ impl TopMenu {
                let text = RichText::new("NoPassPlz").size(theme.text_sizes.normal);
                ui.label(text);
 
-               let text = RichText::new("Version 2.0.0").size(theme.text_sizes.normal);
+               let text = RichText::new("Version 2.0.10").size(theme.text_sizes.normal);
                ui.label(text);
 
                let repo_link = "https://github.com/greekfetacheese/no-pass-plz";
