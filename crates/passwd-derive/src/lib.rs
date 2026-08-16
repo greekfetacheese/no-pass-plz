@@ -1,5 +1,5 @@
 use argon2_rs::{Argon2, RECOMMENDED_HASH_LENGTH};
-use hmac::{Hmac, Mac};
+use hmac::{KeyInit, Mac, SimpleHmac};
 use secure_types::{SecureArray, SecureString, SecureVec, Zeroize};
 use sha3::{Digest, Sha3_512};
 
@@ -9,7 +9,6 @@ pub const M_COST: u32 = 4096_000;
 pub const T_COST: u32 = 32;
 pub const P_COST: u32 = 1;
 
-/// Estimated time 135 seconds
 pub fn default_argon2() -> Argon2 {
    Argon2 {
       m_cost: M_COST,
@@ -55,7 +54,7 @@ impl PasswordDeriver {
 
    pub fn derive_at(&self, index: u32) -> SecureString {
       let res = self.seed.unlock(|seed| {
-         let mut mac = Hmac::<Sha3_512>::new_from_slice(seed).expect("HMAC");
+         let mut mac = SimpleHmac::<Sha3_512>::new_from_slice(seed).expect("HMAC");
          mac.update(&index.to_be_bytes());
          let mut result = mac.finalize().into_bytes();
 

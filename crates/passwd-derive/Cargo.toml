@@ -1,6 +1,6 @@
 [package]
 name = "passwd-derive"
-version = "0.1.1"
+version = "0.1.2"
 readme = "readme.md"
 description = "Deterministic password generator"
 license = "MIT OR Apache-2.0"
@@ -9,7 +9,7 @@ edition = "2024"
 
 [dependencies]
 argon2-rs = "0.2"
-hmac = "0.12.1"
-sha3 = "0.10.8"
+hmac = {version = "0.13.0", features = ["zeroize"]}
+sha3 = "0.12"
 secure-types = "0.3"
-hex = "0.4.3"
+hex = "0.4"
