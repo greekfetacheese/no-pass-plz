@@ -1,7 +1,5 @@
 use eframe::egui::{Label, Order, RichText, Spinner, Ui, vec2};
-
-use zeus_theme::Theme;
-use zeus_widgets::{Button, Modal};
+use egui_elements::{Button, Theme, Modal};
 
 pub struct LoadingWindow {
    open: bool,
@@ -87,8 +85,8 @@ impl MsgWindow {
 
       let button_visuals = theme.button_visuals();
 
-      let title = RichText::new(self.title.clone()).size(theme.text_sizes.heading);
-      let msg = RichText::new(&self.message).size(theme.text_sizes.normal);
+      let title = RichText::new(self.title.clone()).size(theme.typography.heading);
+      let msg = RichText::new(&self.message).size(theme.typography.normal);
 
       let mut open = self.open;
 
@@ -111,7 +109,7 @@ impl MsgWindow {
                ui.add(label);
 
                let size = vec2(50.0, 20.0);
-               let text = RichText::new("OK").size(theme.text_sizes.normal);
+               let text = RichText::new("OK").size(theme.typography.normal);
                let ok_button = Button::new(text).min_size(size).visuals(button_visuals);
 
                if ui.add(ok_button).clicked() {

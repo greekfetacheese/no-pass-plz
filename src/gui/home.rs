@@ -1,9 +1,7 @@
 use super::{AppCtx, SHARED_GUI, app::IndexData};
 use eframe::egui::{FontId, Order, RichText, ScrollArea, Spinner, Stroke, Ui, vec2};
 use secure_types::Zeroize;
-use zeus_theme::Theme;
-use zeus_ui_components::QrImage;
-use zeus_widgets::{Button, Label, Modal, MultiLabel, SecureTextEdit};
+use egui_elements::{Button, Label, Modal, Theme, QrImage, MultiLabel, SecureTextEdit};
 
 /// Main Ui
 pub struct Home {
@@ -62,17 +60,17 @@ impl Home {
             ui.spacing_mut().button_padding = vec2(4.0, 4.0);
 
             let current_page_text = format!("Showing {}-{} entries", start, end);
-            let current_page_text = RichText::new(current_page_text).size(theme.text_sizes.large);
+            let current_page_text = RichText::new(current_page_text).size(theme.typography.large);
             ui.label(current_page_text);
 
-            let text = RichText::new("Prev").size(theme.text_sizes.normal);
+            let text = RichText::new("Prev").size(theme.typography.normal);
             let button = Button::new(text).visuals(button_visuals);
 
             if ui.add_enabled(self.current_page > 0, button).clicked() {
                self.current_page -= 1;
             }
 
-            let text = RichText::new("Next").size(theme.text_sizes.normal);
+            let text = RichText::new("Next").size(theme.typography.normal);
             let button = Button::new(text).visuals(button_visuals);
 
             if ui.add(button).clicked() {
@@ -126,7 +124,7 @@ impl Home {
       let frame = theme.frame1.stroke(stroke).outer_margin(0);
 
       let no_entry_text =
-         RichText::new("No entry found").size(theme.text_sizes.normal).color(warning);
+         RichText::new("No entry found").size(theme.typography.normal).color(warning);
 
       let title_text = if exists {
          let title = index_data.title.clone();
@@ -134,7 +132,7 @@ impl Home {
             true => format!("{} (EXPOSED)", title),
             false => title,
          };
-         RichText::new(final_text).size(theme.text_sizes.normal).color(title_color)
+         RichText::new(final_text).size(theme.typography.normal).color(title_color)
       } else {
          no_entry_text
       };
@@ -147,14 +145,14 @@ impl Home {
 
          ui.horizontal(|ui| {
             let text = format!("{}.", index);
-            let text = RichText::new(text).size(theme.text_sizes.normal);
+            let text = RichText::new(text).size(theme.typography.normal);
             let index_label = Label::new(text, None);
             let multi_label = MultiLabel::new(vec![index_label, title_label]).inter_spacing(10.0);
             ui.add(multi_label);
          });
 
          ui.horizontal(|ui| {
-            let text = RichText::new("Copy Password").size(theme.text_sizes.small);
+            let text = RichText::new("Copy Password").size(theme.typography.small);
             let button = Button::new(text).visuals(button_visuals);
             if ui.add(button).clicked() {
                let password = app.derive_at(index).expect("Deriver instance not found");
@@ -162,14 +160,14 @@ impl Home {
                ui.ctx().copy_text(pass_str);
             }
 
-            let text = RichText::new("QR Code").size(theme.text_sizes.small);
+            let text = RichText::new("QR Code").size(theme.typography.small);
             let button = Button::new(text).visuals(button_visuals);
             if ui.add(button).clicked() {
                self.show_qr_code = true;
                self.encode_qr(app.clone(), index);
             }
 
-            let text = RichText::new("Edit").size(theme.text_sizes.small);
+            let text = RichText::new("Edit").size(theme.typography.small);
             let button = Button::new(text).visuals(button_visuals);
 
             if ui.add(button).clicked() {
@@ -223,19 +221,19 @@ impl Home {
                }
 
                if let Some(err) = self.qr_image.error() {
-                  let text = RichText::new(err.to_string()).size(theme.text_sizes.normal);
+                  let text = RichText::new(err.to_string()).size(theme.typography.normal);
                   ui.label(text);
                   return;
                }
 
-               let text = RichText::new("QR Code").size(theme.text_sizes.large);
+               let text = RichText::new("QR Code").size(theme.typography.large);
                ui.label(text);
 
                let image = self.qr_image.image();
                let size = vec2(250.0, 250.0);
                ui.add(image.fit_to_exact_size(size));
 
-               let text = RichText::new("Close").size(theme.text_sizes.normal);
+               let text = RichText::new("Close").size(theme.typography.normal);
                let button = Button::new(text).min_size(vec2(100.0, 25.0)).visuals(button_visuals);
                if ui.add(button).clicked() {
                   self.show_qr_code = false;
@@ -264,28 +262,28 @@ impl Home {
                ui.spacing_mut().item_spacing = vec2(10.0, 10.0);
                ui.spacing_mut().button_padding = vec2(8.0, 8.0);
 
-               let text = RichText::new("Title").size(theme.text_sizes.large);
+               let text = RichText::new("Title").size(theme.typography.large);
                ui.label(text);
 
                let text_edit = SecureTextEdit::singleline(&mut self.edited_index.title)
-                  .font(FontId::proportional(theme.text_sizes.normal))
+                  .font(FontId::proportional(theme.typography.normal))
                   .desired_width(ui.available_width() * 0.6)
                   .hint_text("Title");
                ui.add(text_edit);
 
-               let text = RichText::new("Description").size(theme.text_sizes.large);
+               let text = RichText::new("Description").size(theme.typography.large);
                ui.label(text);
 
                let text_edit = SecureTextEdit::multiline(&mut self.edited_index.description)
-                  .font(FontId::proportional(theme.text_sizes.normal))
+                  .font(FontId::proportional(theme.typography.normal))
                   .desired_width(ui.available_width() * 0.9)
                   .hint_text("Description");
                ui.add(text_edit);
 
-               let text = RichText::new("Exposed").size(theme.text_sizes.normal);
+               let text = RichText::new("Exposed").size(theme.typography.normal);
                ui.checkbox(&mut self.edited_index.exposed, text);
 
-               let text = RichText::new("OK").size(theme.text_sizes.normal);
+               let text = RichText::new("OK").size(theme.typography.normal);
                let button = Button::new(text).min_size(vec2(100.0, 25.0)).visuals(button_visuals);
 
                if ui.add(button).clicked() {
@@ -296,7 +294,7 @@ impl Home {
                   });
                }
 
-               let text = RichText::new("Cancel").size(theme.text_sizes.normal);
+               let text = RichText::new("Cancel").size(theme.typography.normal);
                let button = Button::new(text).min_size(vec2(100.0, 25.0)).visuals(button_visuals);
 
                if ui.add(button).clicked() {

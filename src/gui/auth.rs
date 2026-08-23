@@ -1,9 +1,7 @@
 use argon2_rs::Argon2;
 use eframe::egui::{RichText, Ui, vec2};
 use passwd_derive::{PasswordDeriver, default_argon2};
-use zeus_theme::Theme;
-use zeus_ui_components::CredentialsForm;
-use zeus_widgets::Button;
+use egui_elements::{Theme, Button, CredentialsForm};
 
 use super::{AppCtx, SHARED_GUI};
 
@@ -57,10 +55,10 @@ impl Auth {
 
          ui.scope(|ui| {
             ui.spacing_mut().button_padding = vec2(4.0, 4.0);
-            self.credentials_form.show(theme, ui);
+            self.credentials_form.show(ui);
          });
 
-         let text = RichText::new("OK").size(theme.text_sizes.normal);
+         let text = RichText::new("OK").size(theme.typography.normal);
          let button = Button::new(text).min_size(vec2(100.0, 25.0)).visuals(button_visuals);
 
          if ui.add(button).clicked() {
@@ -70,7 +68,7 @@ impl Auth {
          #[cfg(feature = "dev")]
          {
             use secure_types::SecureString;
-            let text = RichText::new("DEV").size(theme.text_sizes.normal);
+            let text = RichText::new("DEV").size(theme.typography.normal);
             let button = Button::new(text).min_size(vec2(100.0, 25.0)).visuals(button_visuals);
             if ui.add(button).clicked() {
                let username = SecureString::from("dev");

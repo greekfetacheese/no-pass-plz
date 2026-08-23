@@ -9,8 +9,7 @@ use eframe::egui::{Context, MenuBar, OpenUrl, Order, RichText, ScrollArea, Ui, v
 use egui_commonmark::{CommonMarkCache, CommonMarkViewer};
 use lazy_static::lazy_static;
 use std::sync::{Arc, RwLock};
-use zeus_theme::{Theme, ThemeKind};
-use zeus_widgets::{Button, Modal};
+use egui_elements::{Button, Theme, ThemeKind, Modal};
 
 use super::gui::{auth::*, home::Home, misc::*};
 
@@ -107,17 +106,17 @@ impl TopMenu {
       MenuBar::new().ui(ui, |ui| {
          ui.spacing_mut().button_padding = vec2(8.0, 8.0);
 
-         let text = RichText::new("Help").size(theme.text_sizes.normal);
+         let text = RichText::new("Help").size(theme.typography.normal);
 
          ui.menu_button(text, |ui| {
             ui.spacing_mut().button_padding = vec2(4.0, 4.0);
 
-            let text = RichText::new("How it works").size(theme.text_sizes.normal);
+            let text = RichText::new("How it works").size(theme.typography.normal);
             if ui.button(text).clicked() {
                self.how_it_works_open = true;
             }
 
-            let text = RichText::new("About").size(theme.text_sizes.normal);
+            let text = RichText::new("About").size(theme.typography.normal);
             if ui.button(text).clicked() {
                self.open_about();
             }
@@ -146,14 +145,14 @@ impl TopMenu {
                ui.spacing_mut().item_spacing = vec2(10.0, 20.0);
                ui.spacing_mut().button_padding = vec2(8.0, 8.0);
 
-               let text = RichText::new("NoPassPlz").size(theme.text_sizes.normal);
+               let text = RichText::new("NoPassPlz").size(theme.typography.normal);
                ui.label(text);
 
-               let text = RichText::new("Version 2.0.10").size(theme.text_sizes.normal);
+               let text = RichText::new("Version 2.0.10").size(theme.typography.normal);
                ui.label(text);
 
                let repo_link = "https://github.com/greekfetacheese/no-pass-plz";
-               let text = RichText::new("View on GitHub").size(theme.text_sizes.normal);
+               let text = RichText::new("View on GitHub").size(theme.typography.normal);
                let button = Button::new(text).min_size(vec2(100.0, 25.0)).visuals(button_visuals);
                let res = ui.add(button);
 
@@ -162,7 +161,7 @@ impl TopMenu {
                   ui.ctx().open_url(url);
                }
 
-               let text = RichText::new("Close").size(theme.text_sizes.normal);
+               let text = RichText::new("Close").size(theme.typography.normal);
                let button = Button::new(text).min_size(vec2(100.0, 25.0)).visuals(button_visuals);
                if ui.add(button).clicked() {
                   self.about_open = false;
@@ -197,7 +196,7 @@ impl TopMenu {
                   CommonMarkViewer::new().show(ui, &mut cache, MARKDOWN);
                });
 
-               let text = RichText::new("Close").size(theme.text_sizes.normal);
+               let text = RichText::new("Close").size(theme.typography.normal);
                let button = Button::new(text).min_size(vec2(100.0, 25.0)).visuals(button_visuals);
                if ui.add(button).clicked() {
                   self.how_it_works_open = false;

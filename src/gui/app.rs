@@ -100,12 +100,12 @@ impl App {
    pub fn new(cc: &CreationContext) -> Self {
       let egui_ctx = cc.egui_ctx.clone();
 
-      let theme = SHARED_GUI.write(|gui| {
+      let mut theme = SHARED_GUI.write(|gui| {
          gui.egui_ctx = egui_ctx.clone();
          gui.theme.clone()
       });
 
-      egui_ctx.set_global_style(theme.style.clone());
+      theme.install(&egui_ctx);
 
       let app_ctx = AppCtx::default();
 
@@ -144,7 +144,7 @@ impl eframe::App for App {
 
          // This is needed for Windows
          if !self.style_has_been_set {
-            let style = gui.theme.style.clone();
+            let style = gui.theme.style();
             ui.set_global_style(style);
             self.style_has_been_set = true;
          }

@@ -13,9 +13,7 @@ edition = "2024"
 eframe = {version = "0.36", features = ["wgpu"]}
 egui_extras = { version = "0.36", features = ["image"] }
 egui_commonmark = "0.25"
-zeus-widgets = {version = "0.4", features = ["secure-types"]}
-zeus-theme = "0.4"
-zeus-ui-components = {version = "0.4", features = ["secure-types", "qr-scanner"]}
+egui-elements = {version = "1", features = ["secure-types", "qr-image", "qr-scanner"]}
 
 passwd-derive = { path = "crates/passwd-derive" }
 argon2-rs = "0.2"
