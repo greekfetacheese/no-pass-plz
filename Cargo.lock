@@ -2692,7 +2692,7 @@ dependencies = [
 
 [[package]]
 name = "no-pass-plz"
-version = "2.0.10"
+version = "2.0.20"
 dependencies = [
  "argon2-rs",
  "eframe",
