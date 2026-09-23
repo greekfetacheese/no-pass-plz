@@ -1,7 +1,7 @@
 use super::{AppCtx, SHARED_GUI, app::IndexData};
 use eframe::egui::{FontId, Order, RichText, ScrollArea, Spinner, Stroke, Ui, vec2};
+use egui_elements::{Button, Label, Modal, MultiLabel, QrImage, SecureTextEdit, Theme};
 use secure_types::Zeroize;
-use egui_elements::{Button, Label, Modal, Theme, QrImage, MultiLabel, SecureTextEdit};
 
 /// Main Ui
 pub struct Home {
@@ -206,8 +206,9 @@ impl Home {
       let mut open = self.show_qr_code;
 
       Modal::new("qr_code", &mut open)
-         .backdrop_order(Order::Foreground)
-         .content_order(Order::Tooltip)
+         .backdrop_order(Order::Middle)
+         .content_order(Order::Foreground)
+         .max_width(400.0)
          .close_on_backdrop(false)
          .close_on_escape(false)
          .show(ui.ctx(), |ui| {
@@ -253,8 +254,9 @@ impl Home {
       let mut open = self.show_edit_window;
 
       Modal::new("entry_edit", &mut open)
-         .backdrop_order(Order::Foreground)
-         .content_order(Order::Tooltip)
+         .backdrop_order(Order::Middle)
+         .content_order(Order::Foreground)
+         .max_width(400.0)
          .close_on_backdrop(false)
          .close_on_escape(false)
          .show(ui.ctx(), |ui| {
@@ -274,10 +276,14 @@ impl Home {
                let text = RichText::new("Description").size(theme.typography.large);
                ui.label(text);
 
+               let hint_text = RichText::new("Don't write sensitive information here")
+                  .size(theme.typography.normal)
+                  .color(theme.colors.text_muted);
+
                let text_edit = SecureTextEdit::multiline(&mut self.edited_index.description)
                   .font(FontId::proportional(theme.typography.normal))
                   .desired_width(ui.available_width() * 0.9)
-                  .hint_text("Description");
+                  .hint_text(hint_text);
                ui.add(text_edit);
 
                let text = RichText::new("Exposed").size(theme.typography.normal);

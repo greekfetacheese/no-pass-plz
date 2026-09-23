@@ -10,16 +10,21 @@ edition = "2024"
 [dependencies]
 
 # GUI
-eframe = {version = "0.36", features = ["wgpu"]}
-egui_extras = { version = "0.36", features = ["image"] }
+eframe = { version = "=0.36", default-features = false, features = [
+    "wgpu",
+    "default_fonts",
+    "wayland",
+    "x11",
+] }
+egui_extras = { version = "0.36", features = ["image", "svg"] }
 egui_commonmark = "0.25"
 egui-elements = {version = "1", features = ["secure-types", "qr-image", "qr-scanner"]}
 
 passwd-derive = { path = "crates/passwd-derive" }
-argon2-rs = "0.2"
+argon2-rs = "0.3"
 
 # Misc
-secure-types = "0.3"
+secure-types = "0.5"
 lazy_static = "1.5"
 serde = {version = "1", features = ["derive"]}
 serde_json = "1"

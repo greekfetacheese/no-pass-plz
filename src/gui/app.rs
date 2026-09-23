@@ -8,19 +8,19 @@ use secure_types::SecureString;
 use serde::{Deserialize, Serialize};
 use std::{
    collections::HashMap,
-   sync::{Arc, RwLock},
+   sync::{Arc, Mutex},
 };
 
 #[derive(Clone, Default)]
-pub struct AppCtx(Arc<RwLock<AppData>>);
+pub struct AppCtx(Arc<Mutex<AppData>>);
 
 impl AppCtx {
    pub fn read<R>(&self, reader: impl FnOnce(&AppData) -> R) -> R {
-      reader(&self.0.read().unwrap())
+      reader(&self.0.lock().unwrap())
    }
 
    pub fn write<R>(&self, writer: impl FnOnce(&mut AppData) -> R) -> R {
-      writer(&mut self.0.write().unwrap())
+      writer(&mut self.0.lock().unwrap())
    }
 
    pub fn load_index_map_from_file(&self) -> Result<(), Box<dyn std::error::Error>> {

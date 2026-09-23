@@ -8,8 +8,8 @@ repository = "https://github.com/greekfetacheese/no-pass-plz"
 edition = "2024"
 
 [dependencies]
-argon2-rs = "0.2"
+argon2-rs = "0.3"
 hmac = {version = "0.13.0", features = ["zeroize"]}
 sha3 = "0.12"
-secure-types = "0.3"
+secure-types = "0.5"
 hex = "0.4"
