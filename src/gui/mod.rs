@@ -7,9 +7,9 @@ use app::AppCtx;
 
 use eframe::egui::{Context, MenuBar, OpenUrl, Order, RichText, ScrollArea, Ui, vec2};
 use egui_commonmark::{CommonMarkCache, CommonMarkViewer};
+use egui_elements::{Button, Modal, Theme, ThemeKind};
 use lazy_static::lazy_static;
 use std::sync::{Arc, Mutex};
-use egui_elements::{Button, Theme, ThemeKind, Modal};
 
 use super::gui::{auth::*, home::Home, misc::*};
 

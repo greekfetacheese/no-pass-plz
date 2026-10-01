@@ -1,5 +1,5 @@
 use eframe::egui::{Label, Order, RichText, Spinner, Ui, vec2};
-use egui_elements::{Button, Theme, Modal};
+use egui_elements::{Button, Modal, Theme};
 
 pub struct LoadingWindow {
    open: bool,

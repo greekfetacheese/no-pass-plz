@@ -1,7 +1,7 @@
 use argon2_rs::Argon2;
 use eframe::egui::{RichText, Ui, vec2};
+use egui_elements::{Button, CredentialsForm, Theme};
 use passwd_derive::{PasswordDeriver, default_argon2};
-use egui_elements::{Theme, Button, CredentialsForm};
 
 use super::{AppCtx, SHARED_GUI};
 

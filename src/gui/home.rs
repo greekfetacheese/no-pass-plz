@@ -1,6 +1,8 @@
 use super::{AppCtx, SHARED_GUI, app::IndexData};
 use eframe::egui::{FontId, Order, RichText, ScrollArea, Spinner, Stroke, Ui, vec2};
-use egui_elements::{Button, Label, Modal, MultiLabel, QrImage, SecureTextEdit, Theme, components::QrEncoding};
+use egui_elements::{
+   Button, Label, Modal, MultiLabel, QrImage, SecureTextEdit, Theme, components::QrEncoding,
+};
 use secure_types::Zeroize;
 
 const QR_IMAGE_SIZE: u32 = 250;
@@ -193,7 +195,7 @@ impl Home {
             target_px: QR_IMAGE_SIZE,
             ..Default::default()
          };
-         
+
          let qr_image = QrImage::with_encoding(&data, uri, encoding);
          data.zeroize();
 
