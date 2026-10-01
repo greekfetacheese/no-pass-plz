@@ -1,7 +1,9 @@
 use super::{AppCtx, SHARED_GUI, app::IndexData};
 use eframe::egui::{FontId, Order, RichText, ScrollArea, Spinner, Stroke, Ui, vec2};
-use egui_elements::{Button, Label, Modal, MultiLabel, QrImage, SecureTextEdit, Theme};
+use egui_elements::{Button, Label, Modal, MultiLabel, QrImage, SecureTextEdit, Theme, components::QrEncoding};
 use secure_types::Zeroize;
+
+const QR_IMAGE_SIZE: u32 = 250;
 
 /// Main Ui
 pub struct Home {
@@ -187,7 +189,12 @@ impl Home {
          let mut data = password.unlock_str(|s| String::from(s));
          let uri = format!("password:{}", index);
 
-         let qr_image = QrImage::new(&data, uri);
+         let encoding = QrEncoding {
+            target_px: QR_IMAGE_SIZE,
+            ..Default::default()
+         };
+         
+         let qr_image = QrImage::with_encoding(&data, uri, encoding);
          data.zeroize();
 
          SHARED_GUI.write(|gui| {
@@ -231,7 +238,7 @@ impl Home {
                ui.label(text);
 
                let image = self.qr_image.image();
-               let size = vec2(250.0, 250.0);
+               let size = self.qr_image.image_size_pt(ui.ctx().pixels_per_point());
                ui.add(image.fit_to_exact_size(size));
 
                let text = RichText::new("Close").size(theme.typography.normal);
